@@ -214,7 +214,13 @@
 
   /* ABOUT */
   .about-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .about-grid { display: grid; grid-template-columns: 240px 1fr 1fr; gap: 48px; align-items: start; }
+  .about-photo { position: relative; }
+  .about-photo::before { content: ''; position: absolute; inset: 14px -14px -14px 14px; border: 1px solid var(--accent); z-index: -1; }
+  .about-photo img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; filter: grayscale(30%); transition: filter 0.3s ease; border: 1px solid var(--border); }
+  .about-photo:hover img { filter: grayscale(0%); }
+  .about-photo-cap { font-size: 0.55rem; letter-spacing: 0.15em; color: var(--muted2); text-transform: uppercase; margin-top: 14px; }
+  .about-photo-cap::before { content: '// '; opacity: 0.5; }
   .about-text p { font-size: 0.75rem; line-height: 1.9; color: var(--muted); margin-bottom: 20px; }
   .about-text p strong { color: var(--text); }
   .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
@@ -340,6 +346,7 @@
     .section-header { grid-template-columns: 1fr; gap: 12px; margin-bottom: 48px; }
     .section-label { padding-top: 0; }
     .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .about-photo { max-width: 220px; margin: 0 auto; }
     .contact-grid { grid-template-columns: 1fr; gap: 40px; }
     .projects-grid { grid-template-columns: 1fr 1fr; gap: 1px; }
     .exp-item { grid-template-columns: 1fr; gap: 6px; padding-left: 24px; }
@@ -573,6 +580,10 @@
       <h2 class="section-title"><span class="lang-en">Background &<br>Values</span><span class="lang-ja">経歴と<br>価値観</span></h2>
     </div>
     <div class="about-grid">
+      <div class="about-photo reveal">
+        <img src="my_photo.png" alt="Kaung Set Lin">
+        <div class="about-photo-cap"><span class="lang-en-i">Tokyo, Japan</span><span class="lang-ja-i">東京、日本</span></div>
+      </div>
       <div class="about-text reveal">
         <p>
           <span class="lang-en">I'm a developer from Myanmar, currently living in Toshima, Tokyo. My journey into tech started from childhood curiosity about games — wanting to understand how they worked, then how to build them myself.</span>
