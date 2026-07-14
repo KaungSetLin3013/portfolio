@@ -761,7 +761,7 @@
           <div class="project-title">Urashima</div>
           <div class="project-desc"><span class="lang-en">A web-based retelling of the Japanese folk tale Urashima Taro. Interactive narrative experience.</span><span class="lang-ja">日本の民話「浦島太郎」をWebで再現したインタラクティブな物語体験。</span></div>
           <div class="project-tags"><span class="tag">HTML/CSS</span><span class="tag">JavaScript</span><span class="tag">Narrative</span></div>
-          <a href="https://kaungsetlin3013.github.io/urashima/urashima.html" target="_blank" class="project-link"><span class="lang-en-i">View project</span><span class="lang-ja-i">プロジェクトを見る</span></a>
+          <a href="https://kaungsetlin3013.github.io/urashima" target="_blank" class="project-link"><span class="lang-en-i">View project</span><span class="lang-ja-i">プロジェクトを見る</span></a>
         </div>
       </div>
 
@@ -774,7 +774,7 @@
           <div class="project-title">Change Background Web</div>
           <div class="project-desc"><span class="lang-en">Dynamic background color changer demonstrating DOM manipulation and interactive event handling.</span><span class="lang-ja">DOM操作とインタラクティブなイベント処理を実演する背景色変更ツール。</span></div>
           <div class="project-tags"><span class="tag">JavaScript</span><span class="tag">DOM</span><span class="tag">CSS</span></div>
-          <a href="https://kaungsetlin3013.github.io/ChangeBackgroundWEB/main.html" target="_blank" class="project-link"><span class="lang-en-i">View project</span><span class="lang-ja-i">プロジェクトを見る</span></a>
+          <a href="https://kaungsetlin3013.github.io/ChangeBackgroundWEB" target="_blank" class="project-link"><span class="lang-en-i">View project</span><span class="lang-ja-i">プロジェクトを見る</span></a>
         </div>
       </div>
 
@@ -1064,7 +1064,21 @@ function setLang(lang) {
   if (mben) mben.classList.toggle('active', lang === 'en');
   if (mbja) mbja.classList.toggle('active', lang === 'ja');
   if (window.restartHeroTypewriter) window.restartHeroTypewriter();
+  try { localStorage.setItem('preferredLang', lang); } catch (e) {}
 }
+
+// ── AUTO-DETECT DEVICE LANGUAGE ──
+(function() {
+  var saved = null;
+  try { saved = localStorage.getItem('preferredLang'); } catch (e) {}
+
+  if (saved === 'en' || saved === 'ja') {
+    setLang(saved);
+  } else {
+    var browserLang = (navigator.language || (navigator.languages && navigator.languages[0]) || 'en').toLowerCase();
+    setLang(browserLang.indexOf('ja') === 0 ? 'ja' : 'en');
+  }
+})();
 
 // ── HERO TYPEWRITER ──
 (function() {
