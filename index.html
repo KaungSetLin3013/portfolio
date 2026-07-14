@@ -183,12 +183,14 @@
   .hero-role em { color: var(--accent); font-style: normal; }
   .hero-typewriter {
     font-family: 'Space Mono', monospace; font-size: 0.78rem; color: var(--text);
-    margin-bottom: 24px; display: flex; align-items: center; gap: 8px;
-    min-height: 1.4em; animation: fadeUp 0.6s 0.25s ease both;
+    margin-bottom: 24px; display: block; max-width: 100%;
+    min-height: 1.4em; line-height: 1.6;
+    overflow-wrap: break-word; word-break: break-word;
+    animation: fadeUp 0.6s 0.25s ease both;
   }
-  .tw-prompt { color: var(--accent); }
+  .tw-prompt { color: var(--accent); margin-right: 8px; }
   .tw-cursor {
-    color: var(--accent); font-weight: 700;
+    color: var(--accent); font-weight: 700; margin-left: 2px;
     animation: twBlink 0.8s step-start infinite;
   }
   @keyframes twBlink { 50% { opacity: 0; } }
@@ -370,6 +372,7 @@
     .hero-name { font-size: 48px; }
     .hero-tag { font-size: 0.52rem; padding: 5px 12px; }
     .hero-desc { font-size: 0.72rem; }
+    .hero-typewriter { font-size: 0.68rem; margin-bottom: 20px; }
     section { padding: 60px 16px; }
     .projects-grid { grid-template-columns: 1fr; }
     .project-img { height: 160px; }
@@ -758,7 +761,7 @@
           <div class="project-title">Urashima</div>
           <div class="project-desc"><span class="lang-en">A web-based retelling of the Japanese folk tale Urashima Taro. Interactive narrative experience.</span><span class="lang-ja">日本の民話「浦島太郎」をWebで再現したインタラクティブな物語体験。</span></div>
           <div class="project-tags"><span class="tag">HTML/CSS</span><span class="tag">JavaScript</span><span class="tag">Narrative</span></div>
-          <a href="https://kaungsetlin3013.github.io/urashima" target="_blank" class="project-link"><span class="lang-en-i">View project</span><span class="lang-ja-i">プロジェクトを見る</span></a>
+          <a href="https://kaungsetlin3013.github.io/urashima/urashima.html" target="_blank" class="project-link"><span class="lang-en-i">View project</span><span class="lang-ja-i">プロジェクトを見る</span></a>
         </div>
       </div>
 
@@ -771,7 +774,7 @@
           <div class="project-title">Change Background Web</div>
           <div class="project-desc"><span class="lang-en">Dynamic background color changer demonstrating DOM manipulation and interactive event handling.</span><span class="lang-ja">DOM操作とインタラクティブなイベント処理を実演する背景色変更ツール。</span></div>
           <div class="project-tags"><span class="tag">JavaScript</span><span class="tag">DOM</span><span class="tag">CSS</span></div>
-          <a href="https://kaungsetlin3013.github.io/ChangeBackgroundWEB/" target="_blank" class="project-link"><span class="lang-en-i">View project</span><span class="lang-ja-i">プロジェクトを見る</span></a>
+          <a href="https://kaungsetlin3013.github.io/ChangeBackgroundWEB/main.html" target="_blank" class="project-link"><span class="lang-en-i">View project</span><span class="lang-ja-i">プロジェクトを見る</span></a>
         </div>
       </div>
 
@@ -1106,20 +1109,31 @@ function setLang(lang) {
     })(0);
   }
 
-  function run() {
-    gen++;
-    var myGen = gen;
+  function cycle(myGen) {
+    if (myGen !== gen) return;
     var msg = document.body.classList.contains('ja') ? messages.ja : messages.en;
-    el.textContent = '';
     typeChars(greeting, 90, myGen, function() {
       setTimeout(function() {
         deleteWords(greeting, 250, myGen, function() {
           setTimeout(function() {
-            typeWords(msg, 220, myGen);
+            typeWords(msg, 220, myGen, function() {
+              setTimeout(function() {
+                deleteWords(msg, 180, myGen, function() {
+                  setTimeout(function() { cycle(myGen); }, 300);
+                });
+              }, 1500);
+            });
           }, 250);
         });
       }, 1000);
     });
+  }
+
+  function run() {
+    gen++;
+    var myGen = gen;
+    el.textContent = '';
+    cycle(myGen);
   }
 
   window.restartHeroTypewriter = run;
