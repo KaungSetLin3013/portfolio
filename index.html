@@ -134,7 +134,7 @@
 
   /* HERO */
   .hero {
-    min-height: 100vh; display: flex; align-items: center;
+    min-height: 100vh; min-height: 100dvh; display: flex; align-items: center;
     padding: 120px 48px 80px; position: relative; overflow: hidden;
   }
   .hero-grid {
@@ -181,6 +181,17 @@
     margin-bottom: 24px; animation: fadeUp 0.6s 0.2s ease both;
   }
   .hero-role em { color: var(--accent); font-style: normal; }
+  .hero-typewriter {
+    font-family: 'Space Mono', monospace; font-size: 0.78rem; color: var(--text);
+    margin-bottom: 24px; display: flex; align-items: center; gap: 8px;
+    min-height: 1.4em; animation: fadeUp 0.6s 0.25s ease both;
+  }
+  .tw-prompt { color: var(--accent); }
+  .tw-cursor {
+    color: var(--accent); font-weight: 700;
+    animation: twBlink 0.8s step-start infinite;
+  }
+  @keyframes twBlink { 50% { opacity: 0; } }
   .hero-desc {
     font-size: 0.8rem; line-height: 1.9; color: var(--muted);
     max-width: 540px; margin-bottom: 48px; animation: fadeUp 0.6s 0.3s ease both;
@@ -276,7 +287,7 @@
 
   /* CONTACT */
   .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-  .contact-heading { font-family: 'Syne', sans-serif; font-size: clamp(48px,7vw,96px); font-weight: 800; line-height: 0.9; letter-spacing: -0.03em; }
+  .contact-heading { font-family: 'Syne', sans-serif; font-size: clamp(48px,7vw,96px); font-weight: 800; line-height: 0.9; letter-spacing: -0.03em; overflow-wrap: break-word; }
   .contact-heading em { -webkit-text-stroke: 2px var(--accent); color: transparent; font-style: normal; }
   .contact-sub { font-size: 0.75rem; color: var(--muted); line-height: 1.9; margin-top: 24px; max-width: 340px; }
   .contact-links { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); }
@@ -365,7 +376,7 @@
     .project-body { padding: 20px; }
     .stat { padding: 20px; }
     .stat-num { font-size: 36px; }
-    .contact-heading { font-size: 52px; }
+    .contact-heading { font-size: clamp(34px, 11vw, 52px); }
     .exp-role { font-size: 1rem; }
     .btn { padding: 12px 22px; font-size: 0.6rem; }
     footer { padding: 20px 16px; }
@@ -425,6 +436,8 @@
   }
   @media (max-width: 600px) {
     .why-card { padding: 28px 20px; }
+    .why-card { transform: scale(0.8) translateY(16px); }
+    .why-card.visible { transform: scale(1) translateY(0); }
   }
 
 </style>
@@ -485,6 +498,9 @@
       <span class="lang-en-i">Backend Engineer · <em>Game Developer</em> · Web Creator</span>
       <span class="lang-ja-i">バックエンドエンジニア · <em>ゲーム開発者</em> · Web制作</span>
     </p>
+    <div class="hero-typewriter">
+      <span class="tw-prompt">&gt;</span><span id="tw-text"></span><span class="tw-cursor">|</span>
+    </div>
     <p class="hero-desc">
       <span class="lang-en">I build systems that work quietly and games that leave a mark.<br>From Myanmar, based in Tokyo — crafting clean backends and playful interactions with code.</span>
       <span class="lang-ja">静かに動くシステムと、心に残るゲームをつくる。<br>ミャンマー出身、東京在住 ― きれいなバックエンドと楽しいインタラクションをコードで構築しています。</span>
@@ -556,8 +572,8 @@
     <div class="why-vision reveal">
       <div class="why-vision-label"><span class="lang-en-i">The Vision</span><span class="lang-ja-i">ビジョン</span></div>
       <div class="why-vision-text">
-        <span class="lang-en">To lead backend systems for <em>cars and robots</em> — writing the code that makes the physical world move. Growing through coding, team communication, and hardware-software integration.</span>
-        <span class="lang-ja"><em>車やロボット</em>のバックエンドシステムをリードする。コーディング、チームとのコミュニケーション、ハードとソフトの連携を通じて、物理世界を動かすコードを書き続けたい。</span>
+        <span class="lang-en">I want to be the person writing the backend that makes a <em>car</em> brake in time, or a <em>robot</em> know where it's standing. Getting there means growing as an engineer, as a teammate, and as someone who can speak fluently across both hardware and software.</span>
+        <span class="lang-ja">車が間に合ってブレーキをかけられるように、ロボットが自分の位置を正しく認識できるように――そんな<em>バックエンド</em>を書ける人になりたい。そのために、エンジニアとして、そしてチームの一員として成長し続け、<em>ハードとソフト</em>の両方を自在に扱える存在を目指しています。</span>
       </div>
       <div class="why-skills-needed">
         <span class="why-pill"><span class="lang-en-i">Backend Engineering</span><span class="lang-ja-i">バックエンド開発</span></span>
@@ -742,7 +758,7 @@
           <div class="project-title">Urashima</div>
           <div class="project-desc"><span class="lang-en">A web-based retelling of the Japanese folk tale Urashima Taro. Interactive narrative experience.</span><span class="lang-ja">日本の民話「浦島太郎」をWebで再現したインタラクティブな物語体験。</span></div>
           <div class="project-tags"><span class="tag">HTML/CSS</span><span class="tag">JavaScript</span><span class="tag">Narrative</span></div>
-          <a href="https://kaungsetlin3013.github.io/urashima/" target="_blank" class="project-link"><span class="lang-en-i">View project</span><span class="lang-ja-i">プロジェクトを見る</span></a>
+          <a href="https://kaungsetlin3013.github.io/urashima" target="_blank" class="project-link"><span class="lang-en-i">View project</span><span class="lang-ja-i">プロジェクトを見る</span></a>
         </div>
       </div>
 
@@ -1044,13 +1060,102 @@ function setLang(lang) {
   var mbja = document.getElementById('mbtn-ja');
   if (mben) mben.classList.toggle('active', lang === 'en');
   if (mbja) mbja.classList.toggle('active', lang === 'ja');
+  if (window.restartHeroTypewriter) window.restartHeroTypewriter();
 }
+
+// ── HERO TYPEWRITER ──
+(function() {
+  var el = document.getElementById('tw-text');
+  if (!el) return;
+  var greeting = 'Hello World';
+  var messages = {
+    en: 'Backend Engineer · Game Developer · Web Creator',
+    ja: 'バックエンドエンジニア・ゲーム開発者・Web制作'
+  };
+  var gen = 0;
+
+  function typeChars(text, speed, myGen, cb) {
+    var i = 0;
+    (function step() {
+      if (myGen !== gen) return;
+      el.textContent = text.slice(0, i);
+      i++;
+      if (i <= text.length) setTimeout(step, speed);
+      else if (cb) cb();
+    })();
+  }
+
+  function deleteWords(text, speed, myGen, cb) {
+    var words = text.split(' ');
+    (function step() {
+      if (myGen !== gen) return;
+      if (words.length === 0) { if (cb) cb(); return; }
+      words.pop();
+      el.textContent = words.join(' ');
+      setTimeout(step, speed);
+    })();
+  }
+
+  function typeWords(text, speed, myGen, cb) {
+    var words = text.split(' ');
+    (function step(i) {
+      if (myGen !== gen) return;
+      el.textContent = words.slice(0, i).join(' ');
+      if (i <= words.length) setTimeout(function() { step(i + 1); }, speed);
+      else if (cb) cb();
+    })(0);
+  }
+
+  function run() {
+    gen++;
+    var myGen = gen;
+    var msg = document.body.classList.contains('ja') ? messages.ja : messages.en;
+    el.textContent = '';
+    typeChars(greeting, 90, myGen, function() {
+      setTimeout(function() {
+        deleteWords(greeting, 250, myGen, function() {
+          setTimeout(function() {
+            typeWords(msg, 220, myGen);
+          }, 250);
+        });
+      }, 1000);
+    });
+  }
+
+  window.restartHeroTypewriter = run;
+  run();
+})();
 
 // ── SCROLL REVEAL ──
 (function() {
+  // set all skill percentages to 0 initially, so they can count up
+  document.querySelectorAll('.skill-item').forEach(function(el) {
+    var pctEl = el.querySelector('.skill-pct');
+    if (pctEl) pctEl.textContent = '0%';
+  });
+
+  function countUpSkill(el) {
+    var pctEl = el.querySelector('.skill-pct');
+    if (!pctEl || el.dataset.counted) return;
+    el.dataset.counted = '1';
+    var target = parseInt(getComputedStyle(el).getPropertyValue('--w'), 10) || 0;
+    var duration = 1000;
+    var start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      pctEl.textContent = Math.round(progress * target) + '%';
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
   var obs = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
-      if (e.isIntersecting) e.target.classList.add('visible');
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        if (e.target.classList.contains('skill-item')) countUpSkill(e.target);
+      }
     });
   }, { threshold: 0.1 });
 
