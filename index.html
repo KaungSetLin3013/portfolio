@@ -1186,7 +1186,7 @@ function setLang(lang) {
 (function() {
   var el = document.getElementById('tw-text');
   if (!el) return;
-  var greeting = 'Hello World';
+  var greeting = 'Hello World!';
   var messages = {
     en: 'Backend Engineer · Game Developer · Web Creator',
     ja: 'バックエンドエンジニア・ゲーム開発者・Web制作'
@@ -1232,7 +1232,7 @@ function setLang(lang) {
       setTimeout(function() {
         deleteWords(greeting, 250, myGen, function() {
           setTimeout(function() {
-            typeWords(msg, 220, myGen, function() {
+            typeChars(msg, 45, myGen, function() {
               setTimeout(function() {
                 deleteWords(msg, 180, myGen, function() {
                   setTimeout(function() { cycle(myGen); }, 300);
