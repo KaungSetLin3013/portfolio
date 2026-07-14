@@ -79,6 +79,20 @@
   }
   #cursor-ring.hover { width: 52px; height: 52px; opacity: 1; }
 
+  #boot-intro {
+    position: fixed; inset: 0; z-index: 100000;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    transition: opacity 0.6s ease;
+  }
+  #boot-intro.boot-hide { opacity: 0; pointer-events: none; }
+  #boot-intro-lines {
+    font-family: 'Space Mono', monospace; font-size: 0.8rem;
+    color: var(--accent); white-space: pre-line; line-height: 1.8;
+    max-width: 90vw;
+  }
+
   /* NOISE */
   body::before {
     content: '';
@@ -99,7 +113,14 @@
   .nav-logo { text-decoration: none; display: flex; align-items: center; }
   .nav-logo img { height: 44px; width: auto; object-fit: contain; display: block; }
   .nav-right { display: flex; align-items: center; gap: 32px; }
-  .nav-links { list-style: none; display: flex; gap: 28px; }
+  .nav-links { list-style: none; display: flex; gap: 28px; position: relative; }
+  .nav-indicator {
+    position: absolute; bottom: -6px; height: 2px;
+    background: var(--accent); border-radius: 1px;
+    width: 0; opacity: 0;
+    transition: left 0.3s ease, width 0.3s ease, opacity 0.2s ease;
+    pointer-events: none;
+  }
   .nav-links a {
     color: var(--muted); text-decoration: none;
     font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
@@ -255,7 +276,23 @@
   /* PROJECTS */
   .projects-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
   .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
-  .project-card { background: var(--bg); overflow: hidden; opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease, background 0.3s; }
+  .project-card {
+    background: var(--bg); overflow: hidden; opacity: 0; transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease, background 0.3s;
+    position: relative;
+  }
+  .project-card::after {
+    content: ''; position: absolute; inset: 0; padding: 2px;
+    background: conic-gradient(from var(--angle, 0deg), var(--accent), transparent 35%, var(--accent2), transparent 75%, var(--accent));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: 0; transition: opacity 0.3s ease;
+    animation: spinBorder 3s linear infinite;
+    pointer-events: none;
+  }
+  .project-card:hover::after { opacity: 1; }
+  @property --angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+  @keyframes spinBorder { to { --angle: 360deg; } }
   .project-card.visible { opacity: 1; transform: translateY(0); }
   .project-card:hover { background: var(--surface); }
   .project-img { width: 100%; height: 180px; object-fit: cover; display: block; filter: grayscale(30%); transition: filter 0.3s; }
@@ -447,6 +484,10 @@
 </head>
 <body>
 
+<div id="boot-intro">
+  <div id="boot-intro-lines"></div>
+</div>
+
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 
@@ -462,6 +503,7 @@
       <li><a href="#projects"><span class="lang-en-i">Projects</span><span class="lang-ja-i">制作</span></a></li>
       <li><a href="#experience"><span class="lang-en-i">Experience</span><span class="lang-ja-i">経歴</span></a></li>
       <li><a href="#contact"><span class="lang-en-i">Contact</span><span class="lang-ja-i">連絡</span></a></li>
+      <div class="nav-indicator" id="navIndicator"></div>
     </ul>
     <div class="lang-toggle">
       <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
@@ -1080,6 +1122,66 @@ function setLang(lang) {
   }
 })();
 
+// ── MAGNETIC BUTTONS ──
+(function() {
+  if (window.matchMedia && window.matchMedia('(hover: none)').matches) return;
+  document.querySelectorAll('.btn').forEach(function(btn) {
+    btn.style.transition = 'transform 0.3s ease';
+    btn.addEventListener('mousemove', function(e) {
+      btn.style.transition = 'none';
+      var r = btn.getBoundingClientRect();
+      var x = (e.clientX - r.left - r.width / 2) * 0.35;
+      var y = (e.clientY - r.top - r.height / 2) * 0.35;
+      btn.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+    });
+    btn.addEventListener('mouseleave', function() {
+      btn.style.transition = 'transform 0.3s ease';
+      btn.style.transform = 'translate(0,0)';
+    });
+  });
+})();
+
+// ── BOOT INTRO ──
+(function() {
+  var overlay = document.getElementById('boot-intro');
+  var linesEl = document.getElementById('boot-intro-lines');
+  if (!overlay || !linesEl) return;
+
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    overlay.remove();
+    return;
+  }
+
+  var lines = [
+    '$ initializing kaung.dev...',
+    '$ loading modules: backend, games, web...',
+    '$ connecting to Tokyo server...',
+    '$ ready.'
+  ];
+  var displayed = [];
+
+  function typeLine(i) {
+    if (i >= lines.length) { setTimeout(finish, 500); return; }
+    var line = lines[i], j = 0;
+    var iv = setInterval(function() {
+      linesEl.textContent = displayed.concat(line.slice(0, j)).join('\n');
+      j++;
+      if (j > line.length) {
+        clearInterval(iv);
+        displayed.push(line);
+        setTimeout(function() { typeLine(i + 1); }, 200);
+      }
+    }, 28);
+  }
+
+  function finish() {
+    overlay.classList.add('boot-hide');
+    setTimeout(function() { overlay.remove(); }, 650);
+  }
+
+  typeLine(0);
+})();
+
 // ── HERO TYPEWRITER ──
 (function() {
   var el = document.getElementById('tw-text');
@@ -1178,11 +1280,49 @@ function setLang(lang) {
     requestAnimationFrame(step);
   }
 
+  var scrambleChars = '!<>-_\\/[]{}—=+*^?#________';
+
+  function scrambleSpan(span) {
+    if (!span || span.dataset.scrambled) return;
+    span.dataset.scrambled = '1';
+    var lines = span.innerHTML.split(/<br\s*\/?>/i).map(function(l) {
+      var t = document.createElement('div');
+      t.innerHTML = l;
+      return t.textContent;
+    });
+    var maxLen = Math.max.apply(null, lines.map(function(l) { return l.length; }));
+    var iter = 0;
+    var interval = setInterval(function() {
+      var html = lines.map(function(line) {
+        return line.split('').map(function(c, i) {
+          if (c === ' ') return ' ';
+          if (i < iter) return line[i];
+          return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+        }).join('');
+      }).join('<br>');
+      span.innerHTML = html;
+      iter += 1;
+      if (iter > maxLen) {
+        clearInterval(interval);
+        span.innerHTML = lines.join('<br>');
+      }
+    }, 35);
+  }
+
+  function scrambleSectionTitle(header) {
+    var h2 = header.querySelector('.section-title');
+    if (!h2 || h2.dataset.scrambleDone) return;
+    h2.dataset.scrambleDone = '1';
+    scrambleSpan(h2.querySelector('.lang-en'));
+    scrambleSpan(h2.querySelector('.lang-ja'));
+  }
+
   var obs = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) {
         e.target.classList.add('visible');
         if (e.target.classList.contains('skill-item')) countUpSkill(e.target);
+        if (e.target.classList.contains('section-header')) scrambleSectionTitle(e.target);
       }
     });
   }, { threshold: 0.1 });
@@ -1229,6 +1369,32 @@ hamburger.addEventListener('click', function() {
 (function() {
   var sections = document.querySelectorAll('section[id]');
   var links = document.querySelectorAll('.nav-links a');
+  var navLinksEl = document.querySelector('.nav-links');
+  var indicator = document.getElementById('navIndicator');
+
+  function moveIndicator(el) {
+    if (!indicator || !navLinksEl) return;
+    if (!el) { indicator.style.opacity = '0'; return; }
+    var ulRect = navLinksEl.getBoundingClientRect();
+    var elRect = el.getBoundingClientRect();
+    indicator.style.width = elRect.width + 'px';
+    indicator.style.left = (elRect.left - ulRect.left) + 'px';
+    indicator.style.opacity = '1';
+  }
+
+  function getActiveLink() {
+    var active = null;
+    links.forEach(function(a) { if (a.classList.contains('active')) active = a; });
+    return active;
+  }
+
+  links.forEach(function(a) {
+    a.addEventListener('mouseenter', function() { moveIndicator(a); });
+  });
+  if (navLinksEl) {
+    navLinksEl.addEventListener('mouseleave', function() { moveIndicator(getActiveLink()); });
+  }
+
   window.addEventListener('scroll', function() {
     var cur = '';
     sections.forEach(function(s) {
@@ -1237,7 +1403,10 @@ hamburger.addEventListener('click', function() {
     links.forEach(function(a) {
       a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
     });
+    if (!navLinksEl.matches(':hover')) moveIndicator(getActiveLink());
   }, { passive: true });
+
+  window.addEventListener('resize', function() { moveIndicator(getActiveLink()); });
 })();
 </script>
 </body>
